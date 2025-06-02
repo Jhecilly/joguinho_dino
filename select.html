@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Selecionar Personagem</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="select-container">
+        <h2>Escolha seu Bonequinho!</h2>
+        <form id="nameForm">
+            <label for="playerName">Insira seu nome:</label>
+            <input type="text" id="playerName" placeholder="Digite seu nome" required>
+            <button type="submit" class="button">Confirmar</button>
+        </form>
+        <div class="character-options">
+            <img src="assets/char1.png" class="character" onclick="selectCharacter('char1.png')">
+            <img src="assets/char2.png" class="character" onclick="selectCharacter('char2.png')">
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('nameForm').addEventListener('submit', (event) => {
+            event.preventDefault(); // Impede o envio padrão do formulário
+            const playerName = document.getElementById('playerName').value;
+            if (playerName) {
+                localStorage.setItem('playerName', playerName); // Salva o nome no localStorage
+                alert(`Nome salvo: ${playerName}`);
+                window.location.href = 'game.html'; // Redireciona para o jogo
+            } else {
+                alert('Por favor, insira um nome válido.');
+            }
+        });
+
+        function selectCharacter(character) {
+            localStorage.setItem('selectedCharacter', character);
+        }
+    </script>
+</body>
+</html>

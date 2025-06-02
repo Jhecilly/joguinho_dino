@@ -1,0 +1,90 @@
+/* Fundo da página inicial */
+body.index-background {
+    background-image: url('assets/background.png');
+    font-family: 'Press Start 2P', cursive;
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.index-container {
+    text-align: center;
+    background: rgba(192, 201, 242, 0);
+    padding: 2px 8px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 100vh;
+    padding-bottom: 30px
+}
+
+.button {
+    display: inline-block;
+    padding: 9px 9px;
+    margin-top: 50px;
+    border: 2px solid #0000001f;
+    border-radius: 12px;
+    font-size: 1.2rem;
+    text-decoration: none;
+    color: rgb(216, 216, 216);
+    transition: transform 0.2s;
+    font-family: 'Press Start 2P', cursive;
+}
+
+.button:hover {
+    transform: scale(1.1);
+}
+
+.select-container {
+    text-align: center;
+    margin-top: 100px;
+}
+
+.character-options {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.character {
+    width: 100px;
+    height: 100px;
+    margin: 0 20px;
+    padding: 10px;
+    border: 2px solid #000;
+    background-color: #fffde7;
+    border-radius: 12px;
+    transition: transform 0.2s;
+    cursor: pointer;
+}
+
+.character:hover {
+    transform: scale(1.1);
+}
+
+.game-container {
+    text-align: center;
+    margin-top: 50px;
+}
+
+#restartButton {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    background-color: #9594946e;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+#restartButton:hover {
+    background-color: #6c6c6cb9;
+}
+
+

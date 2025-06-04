@@ -5,6 +5,21 @@
     <title>Histórico de Pontuações</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        .record-row {
+            background-color: #FFE4E1; /* Misty Rose - cor pastel suave */
+        }
+        
+        /* Efeito hover suave */
+        #scoreTable tbody tr:hover {
+            background-color: #F0F0F0;
+        }
+        
+        /* A linha do record mantém sua cor mesmo no hover */
+        #scoreTable tbody tr.record-row:hover {
+            background-color: #FFE4E1;
+        }
+    </style>
 </head>
 <body>
     <div class="historico-container">
@@ -26,8 +41,10 @@
         const highScores = JSON.parse(localStorage.getItem('highScores')) || [];
         highScores.sort((a, b) => b.score - a.score);
         const tbody = document.querySelector('#scoreTable tbody');
-        highScores.forEach(score => {
+        
+        highScores.forEach((score, index) => {
             const tr = document.createElement('tr');
+            if (index === 0) tr.className = 'record-row'; // Adiciona classe na linha do recorde
             tr.innerHTML = `<td>${score.name}</td><td>${score.score}</td>`;
             tbody.appendChild(tr);
         });

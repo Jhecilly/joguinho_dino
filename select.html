@@ -9,10 +9,10 @@
     <div class="select-container">
         <h2>Escolha seu Bonequinho!</h2>
         <form id="nameForm">
-        <div class="character-options">
-            <img src="assets/char1.png" class="character" onclick="selectCharacter('char1.png')">
-            <img src="assets/char2.png" class="character" onclick="selectCharacter('char2.png')">
-        </div>
+            <div class="character-options">
+                <img src="assets/char1.png" class="character" data-char="char1.png">
+                <img src="assets/char2.png" class="character" data-char="char2.png">
+            </div>
             <label for="playerName">Insira seu nome:</label>
             <input type="text" id="playerName" placeholder="Digite seu nome" required>
             <button type="submit" class="button">Confirmar</button>
@@ -20,13 +20,24 @@
     </div>
 
     <script>
+        let selectedChar = 'char1.png';
+        
+        document.querySelectorAll('.character').forEach(char => {
+            char.addEventListener('click', () => {
+                document.querySelectorAll('.character').forEach(c => c.style.border = 'none');
+                char.style.border = '2px solid yellow';
+                selectedChar = char.dataset.char;
+                localStorage.setItem('selectedCharacter', selectedChar);
+            });
+        });
+
         document.getElementById('nameForm').addEventListener('submit', (event) => {
-            event.preventDefault(); // Impede o envio padrão do formulário
-            const playerName = document.getElementById('playerName').value;
+            event.preventDefault();
+            const playerName = document.getElementById('playerName').value.trim();
             if (playerName) {
-                localStorage.setItem('playerName', playerName); // Salva o nome no localStorage
-                alert(`Nome salvo: ${playerName}`);
-                window.location.href = 'game.html'; // Redireciona para o jogo
+                localStorage.setItem('playerName', playerName);
+                localStorage.setItem('selectedCharacter', selectedChar);
+                window.location.href = 'game.html';
             } else {
                 alert('Por favor, insira um nome válido.');
             }
@@ -34,15 +45,11 @@
 
         function selectCharacter(character) {
             localStorage.setItem('selectedCharacter', character);
+            // Remove a classe active de todos os personagens
+            document.querySelectorAll('.character').forEach(c => c.classList.remove('active'));
+            // Adiciona a classe active ao personagem selecionado
+            event.target.classList.add('active');
         }
     </script>
-    <script>
-document.querySelectorAll('.character').forEach(char => {
-    char.addEventListener('click', function() {
-        document.querySelectorAll('.character').forEach(c => c.classList.remove('selected'));
-        this.classList.add('selected');
-    });
-});
-</script>
 </body>
 </html>

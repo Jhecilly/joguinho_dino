@@ -9,14 +9,14 @@
     <div class="select-container">
         <h2>Escolha seu Bonequinho!</h2>
         <form id="nameForm">
-            <label for="playerName">Insira seu nome:</label>
-            <input type="text" id="playerName" placeholder="Digite seu nome" required>
-            <button type="submit" class="button">Confirmar</button>
-        </form>
         <div class="character-options">
             <img src="assets/char1.png" class="character" onclick="selectCharacter('char1.png')">
             <img src="assets/char2.png" class="character" onclick="selectCharacter('char2.png')">
         </div>
+            <label for="playerName">Insira seu nome:</label>
+            <input type="text" id="playerName" placeholder="Digite seu nome" required>
+            <button type="submit" class="button">Confirmar</button>
+        </form>
     </div>
 
     <script>
@@ -36,5 +36,13 @@
             localStorage.setItem('selectedCharacter', character);
         }
     </script>
+    <script>
+document.querySelectorAll('.character').forEach(char => {
+    char.addEventListener('click', function() {
+        document.querySelectorAll('.character').forEach(c => c.classList.remove('selected'));
+        this.classList.add('selected');
+    });
+});
+</script>
 </body>
 </html>

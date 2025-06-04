@@ -16,24 +16,35 @@ cactusImages[1].src = 'assets/flower2.png';
 let jumpSound = new Audio('assets/jump.mp3');
 let gameOverSound = new Audio('assets/gameover.mp3');
 
-let playerX = 50, playerY = 264, velocityY = 0, gravity = 0.5, jumping = false;
-let cactusX = 1200, cactusIndex = 0, speed = 6;
+// Ajuste as posições verticais
+let playerX = 50, playerY = 220, velocityY = 0, gravity = 0.6, jumping = false;
+let speed = 8; // Velocidade inicial mais alta
 let score = 0, timeCounter = 0;
+let lastTime = Date.now();
+let cactusSpawnInterval = 600; // Spawn de cactos mais frequente
+let lastCactusSpawn = Date.now();
+let gameOver = false;
+let dayNightTransition = 0;
+
+let cactos = [
+    { x: 1200, index: 0 },
+    { x: 1500, index: 1 },
+    { x: 1800, index: 0 }  // Adiciona um terceiro cacto
+];
 
 document.addEventListener('keydown', e => {
-    if (e.code === 'Space' && !jumping) {
-        velocityY = -10;
+    if (e.code === 'Space' && !jumping && !gameOver) {
+        velocityY = -12; // Força do pulo um pouco menor
         jumping = true;
         jumpSound.play();
     }
-});
-
-document.getElementById('restartButton').addEventListener('click', () => {
-    window.location.reload();
+    if (e.code === 'Enter' && gameOver) {
+        window.location.reload();
+    }
 });
 
 function saveScore(score) {
-    const playerName = prompt("Insira seu nome:");
+    const playerName = localStorage.getItem('playerName') || prompt("Insira seu nome:");
     if (playerName) {
         const highScores = JSON.parse(localStorage.getItem('highScores')) || [];
         highScores.push({ name: playerName, score: score });
@@ -44,57 +55,95 @@ function saveScore(score) {
     }
 }
 
-function update() {
-    // Aumenta dificuldade com o tempo
-    timeCounter++;
-    if (timeCounter % 1000 === 0) {
-        speed += 0.5;
-    }
-
-    // Pulo e gravidade
-    playerY += velocityY;
-    velocityY += gravity;
-    if (playerY > 264) {
-        playerY = 264;
-        jumping = false;
-    }
-
-    // Movimento dos cactos
-    cactusX -= speed;
-    if (cactusX < -50) {
-        cactusX = 1200;
-        cactusIndex = (cactusIndex + 1) % cactusImages.length;
-        score++;
-    }
-
-    // Colisão por pixel colorido (simplificada)
-    if (
-        cactusX < playerX + 50 &&
-        cactusX + 50 > playerX &&
-        playerY + 36 > 264 // mesma altura
-    ) {
-        gameOverSound.play();
-        saveScore(score);
-        alert('Game Over! Pontuação: ' + score);
-        window.location.reload();
-    }
-}
-
 function draw() {
-    // Fundo de acordo com pontos
-    let background = score < 50 ? bgDay : bgNight;
+    // Interpolação entre dia e noite
+    let background = bgDay;
+    if (score >= 100) {
+        dayNightTransition = Math.min(1, dayNightTransition + 1); // Transição mais lenta
+        ctx.globalAlpha = 1 - dayNightTransition;
+        ctx.drawImage(bgDay, 0, 0, canvas.width, canvas.height);
+        ctx.globalAlpha = dayNightTransition;
+        background = bgNight;
+    } else {
+        dayNightTransition = Math.max(0, dayNightTransition - 1); // Transição mais lenta
+        background = bgDay;
+    }
+    ctx.globalAlpha = 1;
     ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
 
     // Personagem
-    ctx.drawImage(player, playerX, playerY - 36, 50, 50);
+    ctx.drawImage(player, playerX, playerY - 44, 56, 64);
 
     // Cacto
-    ctx.drawImage(cactusImages[cactusIndex], cactusX, 220, 50, 50);
+    cactos.forEach(cacto => {
+        ctx.drawImage(cactusImages[cacto.index], cacto.x, 220, 50, 50);
+    });
 
     // Pontuação
     ctx.fillStyle = 'black';
     ctx.font = '20px Arial';
     ctx.fillText('Pontuação: ' + score, 10, 30);
+
+    if (gameOver) {
+        ctx.fillStyle = 'black';
+        ctx.font = '32px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('Game Over!', canvas.width/2, canvas.height/2);
+        ctx.textAlign = 'start';
+    }
+}
+
+function update() {
+    if (gameOver) return;
+
+    let now = Date.now();
+    if (now - lastTime >= 100) {
+        score++;
+        lastTime = now;
+        if (score % 50 === 0 && cactusSpawnInterval > 300) {
+            cactusSpawnInterval -= 100;
+            speed += 0.8;
+            gravity += 0.03;
+        }
+    }
+
+    playerY += velocityY;
+    velocityY += gravity;
+
+    if (playerY > 250) {
+        playerY = 250;
+        jumping = false;
+    }
+
+    if (!gameOver) {
+        cactos.forEach(cacto => {
+            cacto.x -= speed;
+            if (cacto.x < -50) {
+                cacto.x = canvas.width + Math.random() * 200;
+                cacto.index = Math.floor(Math.random() * cactusImages.length);
+            }
+        });
+    }
+
+    if (cactos.some(cacto => checkCollision(cacto.x)) && !gameOver) {
+        gameOver = true;
+        gameOverSound.play();
+        setTimeout(() => {
+            saveScore(score);
+        }, 300);
+    }
+}
+
+function checkCollision(cactusXPos) {
+    let dinoW = 56, dinoH = 64;
+    let cactusW = 50, cactusH = 50;
+    let dinoX = playerX, dinoY = playerY - 44;
+    let cactusY = 220;
+
+    return cactusXPos < dinoX + dinoW &&
+           cactusXPos + cactusW > dinoX &&
+           dinoY < cactusY + cactusH &&
+           dinoY + dinoH > cactusY;
 }
 
 function gameLoop() {

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Histórico de Pontuações</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="historico-container">
+        <h2>Histórico de Pontuações</h2>
+        <table id="scoreTable">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Pontuação</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Scores serão inseridos aqui -->
+            </tbody>
+        </table>
+        <a href="index.html" class="button">Voltar ao Início</a>
+    </div>
+    <script>
+        const highScores = JSON.parse(localStorage.getItem('highScores')) || [];
+        highScores.sort((a, b) => b.score - a.score);
+        const tbody = document.querySelector('#scoreTable tbody');
+        highScores.forEach(score => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${score.name}</td><td>${score.score}</td>`;
+            tbody.appendChild(tr);
+        });
+    </script>
+</body>
+</html>
